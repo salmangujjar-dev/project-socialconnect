@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import { Stack, Button } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Home from "./Views/Home";
+const App = () => {
+  const [isTokenValid, setIsTokenValid] = useState(false);
 
-function App() {
+  useEffect(() => {
+    localStorage.getItem("current-login") && setIsTokenValid(true);
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      {isTokenValid ? (
+        <Home />
+      ) : (
+        <div
+          style={{
+            height: "98vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <h1>Welcome!!</h1>
+          <Stack spacing={2} direction="column">
+            <Link to="/login">
+              <Button
+                variant="contained"
+                color="success"
+                size="large"
+                fullWidth
+              >
+                Login
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button variant="contained" color="error" size="large" fullWidth>
+                Signup
+              </Button>
+            </Link>
+          </Stack>
+        </div>
+      )}
+    </>
   );
-}
+};
 
 export default App;
