@@ -1,6 +1,6 @@
 # Site is live on the following link
 
-[Go to Site]().
+[Go to Site](https://main--taupe-arithmetic-377b13.netlify.app/).
 
 # Getting Started with Create React App
 
