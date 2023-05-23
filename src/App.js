@@ -7,7 +7,7 @@ const App = () => {
 
   useEffect(() => {
     localStorage.getItem("current-login") && setIsTokenValid(true);
-  });
+  }, []);
   return (
     <>
       {isTokenValid ? (
