@@ -41,9 +41,9 @@ const Signup = () => {
   //   });
   // };
 
-  const navigateUser = (arg) => {
-    navigate(arg);
-  };
+  // const navigateUser = (arg) => {
+  //   navigate(arg);
+  // };
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -73,7 +73,7 @@ const Signup = () => {
 
     setSignupSuccess(true);
     setTimeout(() => {
-      navigateUser("/login");
+      navigate("/login");
     }, 3000);
   };
 
@@ -95,7 +95,7 @@ const Signup = () => {
         color="error"
         fontSize="large"
         sx={{ cursor: "pointer" }}
-        onClick={() => navigateUser(-1)}
+        onClick={() => navigate(-1)}
       />
       <Container
         style={{

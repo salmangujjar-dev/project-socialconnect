@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -66,69 +67,77 @@ const Login = () => {
   };
 
   return (
-    <Container
-      style={{
-        height: "98vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
-      {showError && <Alert severity="error">Invalid Email or Password</Alert>}
-      {showSuccess && (
-        <Alert severity="success">
-          Login Successful!
-          <br />
-          Redirecting to HomePage in 3 seconds.
-        </Alert>
-      )}
+    <>
+      <ArrowBackIcon
+        color="error"
+        fontSize="large"
+        sx={{ cursor: "pointer" }}
+        onClick={() => navigate(-1)}
+      />
+      <Container
+        style={{
+          height: "98vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        {showError && <Alert severity="error">Invalid Email or Password</Alert>}
+        {showSuccess && (
+          <Alert severity="success">
+            Login Successful!
+            <br />
+            Redirecting to HomePage in 3 seconds.
+          </Alert>
+        )}
 
-      <h1>Login Page</h1>
-      <form onSubmit={handleSubmit}>
-        <FormControl>
-          <Stack spacing={2} direction="column">
-            <TextField
-              id="outlined-basic"
-              label="Email"
-              variant="outlined"
-              name="email"
-              type="email"
-              inputRef={email}
-              required
-              error={showError}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Password"
-              variant="outlined"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              inputRef={password}
-              required
-              error={showError}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    onClick={togglePassword}
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOffIcon />}
-                  </InputAdornment>
-                ),
-              }}
-            />
+        <h1>Login Page</h1>
+        <form onSubmit={handleSubmit}>
+          <FormControl>
+            <Stack spacing={2} direction="column">
+              <TextField
+                id="outlined-basic"
+                label="Email"
+                variant="outlined"
+                name="email"
+                type="email"
+                inputRef={email}
+                required
+                error={showError}
+              />
+              <TextField
+                id="outlined-basic"
+                label="Password"
+                variant="outlined"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                inputRef={password}
+                required
+                error={showError}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      onClick={togglePassword}
+                      sx={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOffIcon />}
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-            <Button type="submit" variant="outlined" color="success">
-              Login
-            </Button>
-          </Stack>
-        </FormControl>
-      </form>
-    </Container>
+              <Button type="submit" variant="outlined" color="success">
+                Login
+              </Button>
+            </Stack>
+          </FormControl>
+        </form>
+      </Container>
+    </>
   );
 };
 
