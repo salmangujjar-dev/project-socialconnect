@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { deletePost, editPost } from "../Helper/Crud";
 import ModalPost from "../Components/PostModal";
@@ -9,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../Components/Navbar";
 import DisplayPosts from "../Components/DisplayPost";
 import Loader from "../Components/Loader";
-import { Container } from "@mui/material";
+import { Container, Box, Toolbar } from "@mui/material";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -157,46 +156,43 @@ const Profile = () => {
             autoClose={3000}
           />
           <Navbar />
-          <ArrowBackIcon
-            color="error"
-            fontSize="large"
-            sx={{ cursor: "pointer" }}
-            onClick={() => navigateUser(-1)}
-          />
-          <h1>My Posts</h1>
-          {postsData.length == 0 && <h1>No Posts Available</h1>}
-          {[...postsData].reverse()?.map((item) => (
-            <DisplayPosts
-              key={item.id}
-              title={item.title}
-              body={item.body}
-              id={item.id}
-              postUserId={item.userId}
-              userId={user.id}
-              handleOpenComments={handleOpenComments}
-              handleOpenEdit={handleOpenEdit}
-              handleDeletePost={handleDeletePost}
+          <Box component="main" sx={{ p: 3 }}>
+            <Toolbar />
+            <h1>My Posts</h1>
+            {postsData.length == 0 && <h1>No Posts Available</h1>}
+            {[...postsData].reverse()?.map((item) => (
+              <DisplayPosts
+                key={item.id}
+                title={item.title}
+                body={item.body}
+                id={item.id}
+                postUserId={item.userId}
+                userId={user.id}
+                handleOpenComments={handleOpenComments}
+                handleOpenEdit={handleOpenEdit}
+                handleDeletePost={handleDeletePost}
+              />
+            ))}
+            <ModalComment
+              openModal={openCommentsModal}
+              closeModal={handleCloseComments}
+              comment={comment}
+              setComment={setComment}
+              addComment={handleAddComment}
+              commentData={commentData}
             />
-          ))}
-          <ModalComment
-            openModal={openCommentsModal}
-            closeModal={handleCloseComments}
-            comment={comment}
-            setComment={setComment}
-            addComment={handleAddComment}
-            commentData={commentData}
-          />
-          <ModalPost
-            openModal={openEditModal}
-            closeModal={handleCloseEdit}
-            heading="Edit Post"
-            handleSubmit={handleEditPost}
-            action="Save"
-            title={title}
-            setTitle={setTitle}
-            body={body}
-            setBody={setBody}
-          />
+            <ModalPost
+              openModal={openEditModal}
+              closeModal={handleCloseEdit}
+              heading="Edit Post"
+              handleSubmit={handleEditPost}
+              action="Save"
+              title={title}
+              setTitle={setTitle}
+              body={body}
+              setBody={setBody}
+            />
+          </Box>
         </Container>
       )}
     </>
