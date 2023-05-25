@@ -1,4 +1,18 @@
-const style = {
+import { yellow } from "@mui/material/colors";
+
+const Styles = {
+  screenCenter: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  },
+  color: {
+    primary: {
+      color: yellow[700],
+    },
+  },
   postsStyle: {
     position: "absolute",
     top: "50%",
@@ -29,4 +43,4 @@ const style = {
   },
 };
 
-export default style;
+export default Styles;

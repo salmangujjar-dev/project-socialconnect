@@ -1,52 +1,40 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
-  Alert,
   Button,
   Stack,
   FormControl,
   TextField,
   Container,
   InputAdornment,
+  Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Styles from "../Styles/Styles";
+import LockIcon from "@mui/icons-material/Lock";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
+const Login = ({ setShowLogin, setIsLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const email = useRef();
   const password = useRef();
 
   const navigate = useNavigate();
-  // const [values, setValues] = useState({
-  //   email: "",
-  //   password: "",
-  // });
-
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setValues({
-  //     ...values,
-  //     [name]: value,
-  //   });
-  // };
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
 
-  useEffect(() => {
-    localStorage.getItem("current-login") && navigate("/");
-  });
-
   const handleSubmit = (e) => {
     setShowError(false);
     e.preventDefault();
     if (!localStorage.getItem("users")) {
+      toast.error("Error Occurred. See Logs!");
+      console.log("Cannot Fetch Users Data.");
       setShowError(true);
       return;
     }
@@ -56,43 +44,28 @@ const Login = () => {
         user.password === password.current.value
     );
     if (userExists) {
-      setShowSuccess(true);
+      toast.success("Login Successful!\nRedirecting to Home in 2 seconds.");
       localStorage.setItem("current-login", userExists.id);
       setTimeout(() => {
-        navigate("/");
-      }, 3000);
+        setIsLogin(true);
+      }, 2000);
     } else {
+      toast.error("Invalid Email or Password");
       setShowError(true);
     }
   };
 
   return (
     <>
-      <ArrowBackIcon
-        color="error"
-        fontSize="large"
-        sx={{ cursor: "pointer" }}
-        onClick={() => navigate(-1)}
-      />
-      <Container
-        style={{
-          height: "98vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        {showError && <Alert severity="error">Invalid Email or Password</Alert>}
-        {showSuccess && (
-          <Alert severity="success">
-            Login Successful!
-            <br />
-            Redirecting to HomePage in 3 seconds.
-          </Alert>
-        )}
-
-        <h1>Login Page</h1>
+      <Container style={Styles.screenCenter}>
+        <ToastContainer
+          position="top-center"
+          theme="dark"
+          hideProgressBar
+          autoClose={3000}
+        />
+        <LockIcon fontSize="large" sx={Styles.color.primary} />
+        <h1 style={Styles.color.primary}>Login Page</h1>
         <form onSubmit={handleSubmit}>
           <FormControl>
             <Stack spacing={2} direction="column">
@@ -103,8 +76,9 @@ const Login = () => {
                 name="email"
                 type="email"
                 inputRef={email}
-                required
                 error={showError}
+                required
+                autoFocus
               />
               <TextField
                 id="outlined-basic"
@@ -124,18 +98,34 @@ const Login = () => {
                         cursor: "pointer",
                       }}
                     >
-                      {showPassword ? <Visibility /> : <VisibilityOffIcon />}
+                      {showPassword ? (
+                        <Visibility sx={Styles.color.primary} />
+                      ) : (
+                        <VisibilityOffIcon sx={Styles.color.primary} />
+                      )}
                     </InputAdornment>
                   ),
                 }}
               />
 
-              <Button type="submit" variant="outlined" color="success">
+              <Button type="submit" variant="contained">
                 Login
               </Button>
             </Stack>
           </FormControl>
         </form>
+        <Typography variant="body1" marginTop={3}>
+          Don't have an account?{" "}
+          <Typography
+            component="span"
+            variant="body1"
+            color="primary"
+            sx={{ textDecoration: "underline", cursor: "pointer" }}
+            onClick={() => setShowLogin(false)}
+          >
+            Sign up
+          </Typography>
+        </Typography>
       </Container>
     </>
   );

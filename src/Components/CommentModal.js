@@ -1,7 +1,7 @@
 import { Modal, Box, Stack, TextField, Button } from "@mui/material";
-import Comments from "../Components/Comments";
-import style from "../Styles/HomeStyle";
-const ModalComment = (props) => {
+import Comments from "./DisplayComment";
+import style from "../Styles/Styles";
+const CommentModal = (props) => {
   return (
     <Modal
       open={props.openModal}
@@ -20,7 +20,7 @@ const ModalComment = (props) => {
             onChange={(e) => props.setComment(e.target.value)}
             fullWidth
             multiline
-            focused
+            autoFocus
             rows={2}
           />
           <Button
@@ -44,4 +44,4 @@ const ModalComment = (props) => {
   );
 };
 
-export default ModalComment;
+export default CommentModal;

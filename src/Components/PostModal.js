@@ -6,9 +6,9 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import style from "../Styles/HomeStyle";
+import Styles from "../Styles/Styles";
 
-const ModalPost = (props) => {
+const PostModal = (props) => {
   return (
     <Modal
       open={props.openModal}
@@ -16,8 +16,8 @@ const ModalPost = (props) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style.postsStyle}>
-        <h1>{props.heading}</h1>
+      <Box sx={Styles.postsStyle}>
+        <h1 style={Styles.color.primary}>{props.heading}</h1>
         <form onSubmit={props.handleSubmit}>
           <FormControl fullWidth>
             <Stack spacing={2} direction="column">
@@ -41,7 +41,7 @@ const ModalPost = (props) => {
                 multiline
                 rows={6}
               />
-              <Button type="submit" variant="contained" color="success">
+              <Button type="submit" variant="contained">
                 {props.action}
               </Button>
             </Stack>
@@ -52,4 +52,4 @@ const ModalPost = (props) => {
   );
 };
 
-export default ModalPost;
+export default PostModal;

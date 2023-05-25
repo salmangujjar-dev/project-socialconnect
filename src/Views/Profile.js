@@ -2,15 +2,16 @@ import { useState, useMemo, useEffect } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { deletePost, editPost } from "../Helper/Crud";
-import ModalPost from "../Components/ModalPost";
-import ModalComment from "../Components/ModalComment";
+import ModalPost from "../Components/PostModal";
+import ModalComment from "../Components/CommentModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LogoutIcon from "@mui/icons-material/Logout";
-import Posts from "../Components/Posts";
+import Navbar from "../Components/Navbar";
+import DisplayPosts from "../Components/DisplayPost";
 import Loader from "../Components/Loader";
+import { Container } from "@mui/material";
 
-const MyPosts = () => {
+const Profile = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -20,6 +21,16 @@ const MyPosts = () => {
   const [openCommentsModal, setOpenCommentsModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [comment, setComment] = useState("");
+
+  const user = useMemo(() => {
+    if (localStorage.getItem("users") != null) {
+      return JSON.parse(localStorage.getItem("users")).find(
+        (user) => user.id == localStorage.getItem("current-login")
+      );
+    } else {
+      return [];
+    }
+  }, []);
 
   const handleOpenComments = (id) => {
     setLoading(true);
@@ -77,7 +88,7 @@ const MyPosts = () => {
       id: currentPostId,
       title: title,
       body: body,
-      userId: userObj.id,
+      userId: user.id,
     };
     let response = await editPost(currentPostId, obj);
     if (response.status === 200) {
@@ -108,37 +119,29 @@ const MyPosts = () => {
       body: comment,
       postId: currentPostId,
       id: commentData[commentData.length - 1].id + 1,
-      name: userObj.name,
-      email: userObj.email,
+      name: user.name,
+      email: user.email,
     };
-    setCommentData([...commentData, obj]);
+    setCommentData([obj, ...commentData]);
     setComment("");
     toast.success("Comment Added!");
     setLoading(false);
   };
   const navigateUser = (page) => navigate(page);
 
-  const userObj = useMemo(() => {
-    return JSON.parse(localStorage.getItem("users")).find(
-      (user) => user.id == localStorage.getItem("current-login")
-    );
-  });
-
-  const [postsData, setPostsData] = useState(() => {
-    let tempObj = JSON.parse(localStorage.getItem("posts")).filter(
-      (post) => post.userId == userObj.id
-    );
-    setLoading(false);
-    return JSON.parse(JSON.stringify(tempObj));
-  });
-
-  const signoutUser = () => {
-    localStorage.removeItem("current-login");
-    navigateUser("/");
-  };
+  const [postsData, setPostsData] = useState([]);
 
   useEffect(() => {
-    localStorage.getItem("current-login") ?? navigateUser("/");
+    const currentLogin = localStorage.getItem("current-login");
+    if (currentLogin === null) {
+      navigate("/");
+      return;
+    }
+    let tempObj = JSON.parse(localStorage.getItem("posts")).filter(
+      (post) => post.userId == user.id
+    );
+    setPostsData(tempObj);
+    setLoading(false);
   }, []);
 
   return (
@@ -146,19 +149,14 @@ const MyPosts = () => {
       {loading ? (
         <Loader />
       ) : (
-        <>
-          <LogoutIcon
-            color="error"
-            fontSize="large"
-            sx={{ cursor: "pointer", float: "right" }}
-            onClick={signoutUser}
-          />
+        <Container>
           <ToastContainer
             position="top-center"
             theme="dark"
             hideProgressBar
             autoClose={3000}
           />
+          <Navbar />
           <ArrowBackIcon
             color="error"
             fontSize="large"
@@ -167,14 +165,14 @@ const MyPosts = () => {
           />
           <h1>My Posts</h1>
           {postsData.length == 0 && <h1>No Posts Available</h1>}
-          {postsData?.map((item) => (
-            <Posts
+          {[...postsData].reverse()?.map((item) => (
+            <DisplayPosts
               key={item.id}
               title={item.title}
               body={item.body}
               id={item.id}
               postUserId={item.userId}
-              userId={userObj.id}
+              userId={user.id}
               handleOpenComments={handleOpenComments}
               handleOpenEdit={handleOpenEdit}
               handleDeletePost={handleDeletePost}
@@ -199,10 +197,10 @@ const MyPosts = () => {
             body={body}
             setBody={setBody}
           />
-        </>
+        </Container>
       )}
     </>
   );
 };
 
-export default MyPosts;
+export default Profile;

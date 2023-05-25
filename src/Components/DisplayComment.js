@@ -1,6 +1,6 @@
 import { Typography, Card, CardContent } from "@mui/material";
 
-const Comments = ({ email, body }) => {
+const DisplayComment = ({ email, body }) => {
   return (
     <Card variant="outlined">
       <CardContent>
@@ -15,4 +15,4 @@ const Comments = ({ email, body }) => {
   );
 };
 
-export default Comments;
+export default DisplayComment;

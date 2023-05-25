@@ -1,121 +1,86 @@
-import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useState, useEffect } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import Styles from "../Styles/Styles";
 import {
-  Alert,
   InputAdornment,
   Button,
   Container,
   Stack,
   FormControl,
   TextField,
+  Typography,
 } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Signup = () => {
+const Signup = ({ setShowLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userExists, setUserExists] = useState(false);
-  const [signupSuccess, setSignupSuccess] = useState(false);
 
-  const name = useRef();
-  const email = useRef();
-  const password = useRef();
-  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [users, setUsers] = useState(() => {
-    return JSON.parse(localStorage.getItem("users")) || [];
-  });
+  const [users, setUsers] = useState([]);
 
-  // const [values, setValues] = useState({
-  //   name: "",
-  //   email: "",
-  //   password: "",
-  // });
-
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setValues({
-  //     ...values,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const navigateUser = (arg) => {
-  //   navigate(arg);
-  // };
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = (e) => {
-    setUserExists(false);
     e.preventDefault();
 
-    const existingUser = users.find(
-      (user) => user.email === email.current.value
-    );
+    const existingUser = users.find((user) => user.email === email);
     if (existingUser) {
-      setUserExists(true);
+      toast.error(`User ${email} already exists!`);
       return;
     }
 
     const newUser = {
-      id: users.length ? users[users.length - 1] + 1 : 0,
-      name: name.current.value,
-      email: email.current.value,
-      password: password.current.value,
+      id: users.length ? users[users.length - 1].id + 1 : 0,
+      name: name,
+      email: email,
+      password: password,
     };
+    console.log(users[users.length - 1] + 1);
+    console.log(newUser);
 
     const updatedUsers = [...users, newUser];
     localStorage.setItem("users", JSON.stringify(updatedUsers));
     setUsers(updatedUsers);
 
-    setSignupSuccess(true);
+    toast.success(
+      "User created successfully!\n Redirecting to Login in 3 seconds."
+    );
     setTimeout(() => {
-      navigate("/login");
+      setShowLogin(true);
     }, 3000);
   };
 
   useEffect(() => {
-    localStorage.getItem("current-login") && navigate("/");
+    localStorage.getItem("users") ?? setUsers([]);
     localStorage.getItem("users") &&
       setUsers(JSON.parse(localStorage.getItem("users")));
   }, []);
 
   const handleReset = (e) => {
-    name = "";
-    email = "";
-    password = "";
+    setName("");
+    setEmail("");
+    setPassword("");
   };
 
   return (
     <>
-      <ArrowBackIcon
-        color="error"
-        fontSize="large"
-        sx={{ cursor: "pointer" }}
-        onClick={() => navigate(-1)}
-      />
-      <Container
-        style={{
-          height: "98vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        {userExists && <Alert severity="error">User Already Exists!</Alert>}
-        {signupSuccess && (
-          <Alert severity="success">
-            User Created Successfully!
-            <br />
-            Redirecting to login page in 3 seconds.
-          </Alert>
-        )}
-
-        <h1>Sign Up Page</h1>
+      <Container sx={Styles.screenCenter}>
+        <ToastContainer
+          position="top-center"
+          theme="dark"
+          hideProgressBar
+          autoClose={3000}
+        />
+        <LockOpenIcon fontSize="large" sx={Styles.color.primary} />
+        <h1 style={Styles.color.primary}>Sign Up Page</h1>
         <form onSubmit={handleSubmit} onReset={handleReset}>
           <FormControl>
             <Stack spacing={2} direction="column">
@@ -125,7 +90,8 @@ const Signup = () => {
                 variant="outlined"
                 name="name"
                 type="text"
-                inputRef={name}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
               <TextField
@@ -134,7 +100,8 @@ const Signup = () => {
                 variant="outlined"
                 name="email"
                 type="email"
-                inputRef={email}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <TextField
@@ -143,7 +110,8 @@ const Signup = () => {
                 variant="outlined"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                inputRef={password}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 inputProps={{
                   minLength: 8,
@@ -155,22 +123,38 @@ const Signup = () => {
                       onClick={togglePassword}
                       sx={{ cursor: "pointer" }}
                     >
-                      {showPassword ? <Visibility /> : <VisibilityOffIcon />}
+                      {showPassword ? (
+                        <Visibility sx={Styles.color.primary} />
+                      ) : (
+                        <VisibilityOffIcon sx={Styles.color.primary} />
+                      )}
                     </InputAdornment>
                   ),
                 }}
               />
               <Stack justifyContent={"center"} direction={"row"} spacing={3}>
-                <Button type="submit" variant="outlined" color="success">
+                <Button type="submit" variant="contained">
                   Sign up
                 </Button>
-                <Button type="reset" variant="outlined" color="error">
+                <Button type="reset" variant="contained" color="error">
                   Reset
                 </Button>
               </Stack>
             </Stack>
           </FormControl>
         </form>
+        <Typography variant="body1" marginTop={3}>
+          Already have an account?{" "}
+          <Typography
+            component="span"
+            variant="body1"
+            color="primary"
+            sx={{ textDecoration: "underline", cursor: "pointer" }}
+            onClick={() => setShowLogin(true)}
+          >
+            Login
+          </Typography>
+        </Typography>
       </Container>
     </>
   );

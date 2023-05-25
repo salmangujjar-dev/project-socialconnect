@@ -9,7 +9,7 @@ import {
   Card,
 } from "@mui/material";
 
-const Posts = ({
+const DisplayPost = ({
   title,
   body,
   id,
@@ -60,4 +60,4 @@ const Posts = ({
   );
 };
 
-export default Posts;
+export default DisplayPost;
