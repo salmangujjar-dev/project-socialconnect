@@ -13,7 +13,13 @@ const Home = () => {
   return (
     <Container sx={Styles.screenCenter}>
       <Navbar />
-      <Typography variant="h3" component="div" align="center">
+      <Typography
+        variant="h3"
+        component="div"
+        align="center"
+        fontWeight={"bold"}
+        letterSpacing={"0.2em"}
+      >
         {user.name}, Welcome to the Homepage
       </Typography>
     </Container>

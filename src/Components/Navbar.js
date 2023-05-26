@@ -51,11 +51,28 @@ const Navbar = (props) => {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.name} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
+            <ListItemButton
+              onClick={() => navigate(item.path)}
+              sx={{ textAlign: "center" }}
+            >
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
         ))}
+        <IconButton
+          size="large"
+          edge="end"
+          aria-label="account of current user"
+          aria-controls={menuId}
+          aria-haspopup="true"
+          onClick={() => {
+            localStorage.removeItem("current-login");
+            navigate("/");
+            window.location.reload();
+          }}
+        >
+          <LogoutIcon />
+        </IconButton>
       </List>
     </Box>
   );
