@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useMemo } from "react";
+import { Fragment, useState, useEffect, useMemo, useCallback } from "react";
 import {
   Button,
   Box,
@@ -19,7 +19,7 @@ import Navbar from "../Components/Navbar";
 import "react-toastify/dist/ReactToastify.css";
 
 const Posts = () => {
-  const [commentData, setCommentData] = useState();
+  const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [openPostModal, setOpenPostModal] = useState(false);
@@ -30,8 +30,8 @@ const Posts = () => {
   const [currentPostId, setCurrentPostId] = useState();
   const [showAllPosts, setShowAllPosts] = useState(true);
 
-  const handleOpenPost = () => setOpenPostModal(true);
-  const handleClosePost = () => setOpenPostModal(false);
+  const handleOpenPost = useCallback(() => setOpenPostModal(true), []);
+  const handleClosePost = useCallback(() => setOpenPostModal(false), []);
   const navigate = useNavigate();
 
   const [postsData, setPostsData] = useState(() => {
@@ -46,14 +46,14 @@ const Posts = () => {
   const user = useMemo(() => {
     if (localStorage.getItem("users") != null) {
       return JSON.parse(localStorage.getItem("users")).find(
-        (user) => user.id == localStorage.getItem("current-login")
+        (user) => user.id === parseInt(localStorage.getItem("current-login"))
       );
     } else {
       return [];
     }
-  });
+  }, []);
 
-  const handleOpenEdit = (id) => {
+  const handleOpenEditPostModal = useCallback((id) => {
     setLoading(true);
     setOpenEditModal(true);
     setCurrentPostId(id);
@@ -64,10 +64,14 @@ const Posts = () => {
       setBody(posts[index].body);
     }
     setLoading(false);
-  };
-  const handleCloseEdit = () => setOpenEditModal(false);
+  }, []);
 
-  const handleOpenComments = (id) => {
+  const handleCloseEditPostModal = useCallback(
+    () => setOpenEditModal(false),
+    []
+  );
+
+  const handleOpenComments = useCallback((id) => {
     setLoading(true);
     fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
       .then((response) => response.json())
@@ -75,51 +79,62 @@ const Posts = () => {
         setCommentData(json);
         setLoading(false);
       });
+    setCurrentPostId(id);
     setOpenCommentsModal(true);
-  };
-  const handleCloseComments = () => setOpenCommentsModal(false);
+  }, []);
 
-  const handleCreatePost = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    let tempObj = {
-      userId: user.id,
-      id: postsData[postsData.length - 1].id + 1,
-      title: title,
-      body: body,
-    };
-    let response = await createPost(tempObj);
-    if (response.status === 201) {
-      setPostsData([...postsData, tempObj]);
-      localStorage.setItem("posts", JSON.stringify([...postsData, tempObj]));
-      setOpenPostModal(false);
-      setTitle("");
-      setBody("");
-      toast.success(`Post Created!`);
-    } else {
-      toast.error("Error Creating Post. See Console Log!");
-      console.log(response);
-    }
-  };
+  const handleCloseComments = useCallback(
+    () => setOpenCommentsModal(false),
+    []
+  );
 
-  const handleDeletePost = async (id) => {
-    setLoading(true);
-    let response = await deletePost(id);
-    if (response.status === 200) {
-      let index = postsData.findIndex((post) => post.id === id);
-      if (index > -1) {
-        postsData.splice(index, 1);
-        localStorage.setItem("posts", JSON.stringify(postsData));
-        toast.success(`Post Deleted! PostId: ${id}`);
+  const handleCreatePost = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      let tempObj = {
+        userId: user.id,
+        id: postsData[postsData.length - 1].id + 1,
+        title: title,
+        body: body,
+      };
+      let response = await createPost(tempObj);
+      if (response.status === 201) {
+        setPostsData((postsData) => [...postsData, tempObj]);
+        localStorage.setItem("posts", JSON.stringify([...postsData, tempObj]));
+        setOpenPostModal(false);
+        setTitle("");
+        setBody("");
+        toast.success(`Post Created!`);
+      } else {
+        toast.error("Error Creating Post. See Console Log!");
+        console.log(response);
       }
-      setLoading(false);
-    } else {
-      toast.error("Error Deleting Post. See Console Log!");
-      console.log(response);
-    }
-  };
+    },
+    [title, body, postsData, user]
+  );
 
-  const handleEditPost = async () => {
+  const handleDeletePost = useCallback(
+    async (id) => {
+      setLoading(true);
+      let response = await deletePost(id);
+      if (response.status === 200) {
+        let index = postsData.findIndex((post) => post.id === id);
+        if (index > -1) {
+          postsData.splice(index, 1);
+          localStorage.setItem("posts", JSON.stringify(postsData));
+          toast.success(`Post Deleted! PostId: ${id}`);
+        }
+        setLoading(false);
+      } else {
+        toast.error("Error Deleting Post. See Console Log!");
+        console.log(response);
+      }
+    },
+    [postsData]
+  );
+
+  const handleEditPost = useCallback(async () => {
     setLoading(true);
     let obj = {
       userId: user.id,
@@ -148,22 +163,22 @@ const Posts = () => {
       toast.error("Error Editing Post. See Console Log!");
       console.log(response);
     }
-  };
+  }, [title, body, currentPostId, postsData, user]);
 
-  const handleAddComment = () => {
+  const handleAddComment = useCallback(() => {
     setLoading(true);
     let obj = {
-      body: comment,
       postId: currentPostId,
       id: commentData[commentData.length - 1].id + 1,
       name: user.name,
       email: user.email,
+      body: comment,
     };
-    setCommentData([obj, ...commentData]);
+    setCommentData((commentData) => [...commentData, obj]);
     setComment("");
     toast.success("Comment Added!");
     setLoading(false);
-  };
+  }, [comment, commentData, user, currentPostId]);
 
   useEffect(() => {
     const currentLogin = localStorage.getItem("current-login");
@@ -184,7 +199,7 @@ const Posts = () => {
         });
     }
     setLoading(false);
-  }, [postsData.length]);
+  }, [postsData.length, navigate]);
 
   return (
     <>
@@ -224,9 +239,7 @@ const Posts = () => {
               heading="Create a Post"
               handleSubmit={handleCreatePost}
               action="Create"
-              title={title}
               setTitle={setTitle}
-              body={body}
               setBody={setBody}
             />
             {[...postsData].reverse()?.map((item) => (
@@ -240,11 +253,11 @@ const Posts = () => {
                     postUserId={item.userId}
                     userId={user.id}
                     handleOpenComments={handleOpenComments}
-                    handleOpenEdit={handleOpenEdit}
+                    handleOpenEditPostModal={handleOpenEditPostModal}
                     handleDeletePost={handleDeletePost}
                   />
                 ) : (
-                  user.id == item.userId && (
+                  user.id === item.userId && (
                     <DisplayPosts
                       key={item.id}
                       title={item.title}
@@ -253,7 +266,7 @@ const Posts = () => {
                       postUserId={item.userId}
                       userId={user.id}
                       handleOpenComments={handleOpenComments}
-                      handleOpenEdit={handleOpenEdit}
+                      handleOpenEditPostModal={handleOpenEditPostModal}
                       handleDeletePost={handleDeletePost}
                     />
                   )
@@ -262,7 +275,7 @@ const Posts = () => {
             ))}
             <PostModal
               openModal={openEditModal}
-              closeModal={handleCloseEdit}
+              closeModal={handleCloseEditPostModal}
               heading="Edit Post"
               handleSubmit={handleEditPost}
               action="Save"
@@ -278,6 +291,7 @@ const Posts = () => {
               setComment={setComment}
               addComment={handleAddComment}
               commentData={commentData}
+              currentUserEmail={user.email}
             />
           </Box>
         </Container>

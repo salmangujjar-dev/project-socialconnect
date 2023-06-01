@@ -1,3 +1,4 @@
+import { memo } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -16,32 +17,22 @@ const DisplayPost = ({
   postUserId,
   userId,
   handleOpenComments,
-  handleOpenEdit,
+  handleOpenEditPostModal,
   handleDeletePost,
 }) => {
+  console.log("child rerender");
   return (
-    <Card sx={{ marginTop: 4 }}>
-      <CardContent>
+    <Card sx={{ marginTop: 4, display: "flex" }}>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flex: "1 0 0",
+        }}
+      >
         <Typography gutterBottom variant="h5" component="div">
           {title}
         </Typography>
-        {userId === postUserId && (
-          <Stack spacing={2} direction="column" sx={{ float: "right" }}>
-            <EditIcon
-              color="success"
-              sx={{ cursor: "pointer" }}
-              onClick={() => {
-                console.log(id);
-                handleOpenEdit(id);
-              }}
-            />
-            <DeleteIcon
-              color="error"
-              sx={{ cursor: "pointer" }}
-              onClick={() => handleDeletePost(id)}
-            />
-          </Stack>
-        )}
         <Typography variant="body2" color="text.secondary">
           {body}
         </Typography>
@@ -56,8 +47,28 @@ const DisplayPost = ({
           Comments
         </Button>
       </CardActions>
+      {userId === postUserId && (
+        <Stack
+          spacing={2}
+          direction="column"
+          sx={{ float: "right", justifyContent: "center" }}
+        >
+          <EditIcon
+            color="success"
+            sx={{ cursor: "pointer" }}
+            onClick={() => {
+              handleOpenEditPostModal(id);
+            }}
+          />
+          <DeleteIcon
+            color="error"
+            sx={{ cursor: "pointer" }}
+            onClick={() => handleDeletePost(id)}
+          />
+        </Stack>
+      )}
     </Card>
   );
 };
 
-export default DisplayPost;
+export default memo(DisplayPost);

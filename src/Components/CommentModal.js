@@ -1,11 +1,19 @@
 import { Modal, Box, Stack, TextField, Button } from "@mui/material";
-import Comments from "./DisplayComment";
+import DisplayComment from "./DisplayComment";
 import style from "../Styles/Styles";
-const CommentModal = (props) => {
+const CommentModal = ({
+  openModal,
+  closeModal,
+  comment,
+  setComment,
+  addComment,
+  commentData,
+  currentUserEmail,
+}) => {
   return (
     <Modal
-      open={props.openModal}
-      onClose={props.closeModal}
+      open={openModal}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -16,26 +24,24 @@ const CommentModal = (props) => {
             id="outlined-basic"
             label="Add a Comment"
             variant="outlined"
-            value={props.comment}
-            onChange={(e) => props.setComment(e.target.value)}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
             fullWidth
             multiline
             autoFocus
             rows={2}
           />
-          <Button
-            variant="contained"
-            color="success"
-            onClick={props.addComment}
-          >
+          <Button variant="contained" color="success" onClick={addComment}>
             Add
           </Button>
-          {props.commentData?.map((item) => (
-            <Comments
+          {[...commentData].reverse()?.map((item) => (
+            <DisplayComment
               key={item.id}
+              commentId={item.id}
+              postId={item.postId}
               email={item.email}
               body={item.body}
-              id={item.id}
+              currentUserEmail={currentUserEmail}
             />
           ))}
         </Stack>
