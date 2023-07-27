@@ -1,34 +1,23 @@
-# Site is live on the following link
+# Project Front-End SocialConnect
 
-[Go to Site](https://main--taupe-arithmetic-377b13.netlify.app/).
+### [Project Demo](https://main--taupe-arithmetic-377b13.netlify.app/)
 
-# Getting Started with Create React App
+## Project Description
+`Welcome to "SocialConnect," the cutting-edge React-based social network project. Seamlessly combining simplicity and functionality, SocialConnect brings your online community to life with its array of powerful features.`
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- **User-Friendly Authentication:** Effortlessly sign up and log in to your personalized profile. Security is paramount, and SocialConnect ensures a smooth and secure authentication process.
 
-## Available Scripts
+- **Demo API Calls:** Discover the power of seamless data retrieval with our demo API calls. Effortlessly fetch data to explore engaging content and stay connected with friends.
 
-In the project directory, you can run:
+- **Create and Share Posts:** Express yourself with ease by crafting captivating posts. Share your thoughts, ideas, and experiences, and instantly connect with your followers.
 
-### `npm start`
+- **Discover and Interact:** Immerse yourself in a world of engaging content. Explore posts from friends and fellow users, stay updated, and interact with a simple click.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Seamless Commenting:** Engage in meaningful discussions. Comment on posts, spark conversations, and be part of a vibrant community.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Edit Posts and Comments:** Empowering you with control, SocialConnect allows editing of posts and comments. Correct, update, or refine your content effortlessly.
 
-### `npm test`
+- **Local Storage Convenience:** Experience hassle-free data storage with LocalStorage integration. Your preferences and interactions are seamlessly saved for a smoother user experience.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Tech Stack
+- React JS
